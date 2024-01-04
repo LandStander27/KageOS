@@ -50,15 +50,28 @@ void get_command(char *cmd, int *pos) {
 			return;
 		}
 
-		if (valid_press) {
-			str[0] = key.character;
-			write(pos, str);
-			write(pos, "_");
-			left(pos, 1);
+		if (key.character == 0x3 && key.code != 0x0E) {
+			valid_press = false;
+		}
 
-			cmd[command_len] = key.character;
-			command_len++;
-			
+		if (valid_press) {
+			if (key.code == 0x0E) {
+				write(pos, " ");
+				left(pos, 2);
+				write(pos, "_");
+				left(pos, 1);
+
+				cmd[command_len-1] = '\0';
+				command_len--;
+			} else {
+				str[0] = key.character;
+				write(pos, str);
+				write(pos, "_");
+				left(pos, 1);
+
+				cmd[command_len] = key.character;
+				command_len++;
+			}
 		}
 
 	}
