@@ -59,3 +59,10 @@ void int_to_string(int num, char *str) {
 	return;
 
 }
+
+void repeat(char *str, char pattern, int times) {
+	for (int i = 0; i < times; i++) {
+		str[i] = pattern;
+	}
+	str[str_len(str)] = '\0';
+}

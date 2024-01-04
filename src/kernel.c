@@ -3,75 +3,61 @@
 
 #include "kernel.h"
 #include "bool.h"
+#include "types.h"
 #include "string.h"
+#include "screen.h"
+#include "keyboard.h"
 
-uint8 inb(uint16 port) {
-	uint8 ret;
-	asm volatile("inb %1, %0" : "=a"(ret) : "d"(port));
-	return ret;
-}
+void get_command(char *cmd, int *pos) {
+	write(pos, "> _");
+	left(pos, 1);
 
-void outb(uint16 port, uint8 data) {
-	asm volatile("outb %0, %1" : "=a"(data) : "d"(port));
-}
+	while (true) {
 
-void write(int *pos, char *str) {
-	volatile char *video = (volatile char*)0xB8000;
-	
-	for (int i = 0; i < *pos; i++) {
-		*video++;
-	}
+		struct Keycode key = get_input();
 
-	while(*str != 0)
-	{
-		char a = *str++;
-		if (a == '\n') {
-			int amount_to_new = 160 - (*pos % 160);
-			for (int i = 0; i < amount_to_new; i++) {
-				*video++;
-			}
-			*pos += amount_to_new;
-			continue;
+		{
+			char *str;
+			int_to_string(key.code, str);
+			write(pos, str);
 		}
-		*video++ = a;
-		*video++ = 15;
-		*pos += 2;
+		write(pos, ", ");
+		char *str;
+		str[0] = key.character;
+		str[1] = '\0';
+		write(pos, str);
+		write(pos, "   ");
+		left(pos, str_len(str)+7);
 	}
 }
 
-void write_to(int pos, char *str) {
-	volatile char *video = (volatile char*)0xB8000;
+int kernel_main(char *error) {
 
-	for (int i = 0; i < pos; i++) {
-		*video++;
-	}
-
-	while(*str != 0)
-	{
-		char a = *str++;
-		if (a == '\n') {
-			int amount_to_new = 160 - (pos % 160);
-			for (int i = 0; i < amount_to_new; i++) {
-				*video++;
-			}
-			pos += amount_to_new;
-			continue;
-		}
-		*video++ = a;
-		*video++ = 15;
-		pos += 2;
-	}
-}
-
-int kernel_main() {
+	clear_screen();
 
 	int pos = 0;
 	write(&pos, "KageOS\n\n");
+
+	char *command;
+	get_command(command, &pos);
 
 	return 0;
 }
 
 void kernel_entry() {
-	int return_code = kernel_main();
+	char *error = "No error message";
+	int return_code = kernel_main(error);
+	clear_screen();
+
+	int pos = 0;
+	write(&pos, "Error code: ");
+
+	char *str;
+	int_to_string(return_code, str);
+
+	write(&pos, str);
+	write(&pos, "\nError message: ");
+	write(&pos, error);
+
 	while (true) {  }
 }
