@@ -8,8 +8,4 @@ typedef unsigned int uint32;
 #define BUFSIZE 2200
 #define NULL 0
 
-#define bool int
-#define false 0
-#define true 1
-
 #endif
