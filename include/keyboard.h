@@ -14,5 +14,6 @@ struct Keycode {
 
 char convert(int c);
 struct Keycode get_input();
+struct Keycode get_input_instant();
 
 #endif

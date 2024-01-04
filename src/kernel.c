@@ -12,8 +12,17 @@ void get_command(char *cmd, int *pos) {
 	write(pos, "> _");
 	left(pos, 1);
 
+	{
+		struct Keycode key = get_input_instant();
+		while (key.character == '\n') {
+			key = get_input_instant();
+		}
+	}
+
 	int last_key = -1;
 	int command_len = 0;
+
+	char str[2] = { ' ', '\0' };
 
 	while (true) {
 
@@ -35,16 +44,21 @@ void get_command(char *cmd, int *pos) {
 			last_key = -1;
 		}
 
+		if (key.character == '\n') {
+			write(pos, " \n");
+			cmd[command_len] = '\0';
+			return;
+		}
+
 		if (valid_press) {
-			char *str;
 			str[0] = key.character;
-			str[1] = '\0';
 			write(pos, str);
 			write(pos, "_");
 			left(pos, 1);
 
 			cmd[command_len] = key.character;
 			command_len++;
+			
 		}
 
 	}
@@ -58,7 +72,20 @@ int kernel_main(char *error) {
 	write(&pos, "KageOS\n\n");
 
 	char *command;
-	get_command(command, &pos);
+
+	while (true) {
+		get_command(command, &pos);
+
+		if (str_len(command) == 0) {
+			continue;
+		}
+
+		write(&pos, command);
+		write(&pos, "\n");
+
+		command[0] = '\0';
+
+	}
 
 	return 0;
 }

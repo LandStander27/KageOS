@@ -13,6 +13,8 @@ char convert(int c) {
 	switch (c) {
 		case 0x39:
 			return ' ';
+		case 0x1C:
+			return '\n';
 		default:
 			return 0x3;
 	}
@@ -47,6 +49,22 @@ struct Keycode get_input() {
 			return key;
 		}
 	}
+
+	key.code = code;
+	if ((code & 128) == 128) {
+		key.action = Release;
+	} else {
+		key.action = Press;
+	}
+	key.character = convert(code);
+	return key;
+}
+
+struct Keycode get_input_instant() {
+
+	struct Keycode key;
+
+	int code = inb(0x60);
 
 	key.code = code;
 	if ((code & 128) == 128) {
