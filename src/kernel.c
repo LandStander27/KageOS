@@ -12,22 +12,37 @@ void get_command(char *cmd, int *pos) {
 	write(pos, "> _");
 	left(pos, 1);
 
+	int last_key = -1;
+
 	while (true) {
+
+		bool valid_press = false;
 
 		struct Keycode key = get_input();
 
-		{
-			char *str;
-			int_to_string(key.code, str);
-			write(pos, str);
+		if (key.action == Press) {
+			if (last_key == -1) {
+				last_key = key.code;
+				valid_press = true;
+			} else {
+				if (last_key != key.code) {
+					last_key = key.code;
+					valid_press = true;
+				}
+			}
+		} else {
+			last_key = -1;
 		}
-		write(pos, ", ");
-		char *str;
-		str[0] = key.character;
-		str[1] = '\0';
-		write(pos, str);
-		write(pos, "   ");
-		left(pos, str_len(str)+7);
+
+		if (valid_press) {
+			char *str;
+			str[0] = key.character;
+			str[1] = '\0';
+			write(pos, str);
+			write(pos, "_");
+			left(pos, 1);
+		}
+
 	}
 }
 

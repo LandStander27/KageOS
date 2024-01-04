@@ -34,7 +34,7 @@ struct Keycode get_input() {
 
 	struct Keycode key;
 
-	char code = 0;
+	int code = 0;
 	while ((code = inb(0x60)) != 0) {
 		if (code > 0) {
 			key.code = code;
