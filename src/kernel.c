@@ -13,6 +13,7 @@ void get_command(char *cmd, int *pos) {
 	left(pos, 1);
 
 	int last_key = -1;
+	int command_len = 0;
 
 	while (true) {
 
@@ -41,6 +42,9 @@ void get_command(char *cmd, int *pos) {
 			write(pos, str);
 			write(pos, "_");
 			left(pos, 1);
+
+			cmd[command_len] = key.character;
+			command_len++;
 		}
 
 	}
