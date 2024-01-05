@@ -11,6 +11,14 @@ void right(int *pos, int amount) {
 	*pos += 2*amount;
 }
 
+void down(int *pos, int amount) {
+	*pos += 160*amount;
+}
+
+void up(int *pos, int amount) {
+	*pos -= 160*amount;
+}
+
 void write(int *pos, char *str) {
 	volatile char *video = (volatile char*)0xB8000;
 	

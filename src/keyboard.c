@@ -1,13 +1,15 @@
 #include "port.h"
 
 char convert(int c) {
-	char keyboard_rows[3][10] = { "qwertyuiop", "asdfghjkl", "zxcvbnm" };
-	if (c >= 0x10 && c <= 0x19) {
-		return keyboard_rows[0][c-0x10];
+	char keyboard_rows[4][10] = { "1234567890", "qwertyuiop", "asdfghjkl", "zxcvbnm" };
+	if (c >= 0x02 && c <= 0x0B) {
+		return keyboard_rows[0][c-0x02];
+	} else if (c >= 0x10 && c <= 0x19) {
+		return keyboard_rows[1][c-0x10];
 	} else if (c >= 0x1E && c <= 0x26) {
-		return keyboard_rows[1][c-0x1E];
+		return keyboard_rows[2][c-0x1E];
 	} else if (c >= 0x2C && c <= 0x32) {
-		return keyboard_rows[2][c-0x2C];
+		return keyboard_rows[3][c-0x2C];
 	}
 
 	switch (c) {

@@ -56,13 +56,15 @@ void get_command(char *cmd, int *pos) {
 
 		if (valid_press) {
 			if (key.code == 0x0E) {
-				write(pos, " ");
-				left(pos, 2);
-				write(pos, "_");
-				left(pos, 1);
+				if (command_len != 0) {
+					write(pos, " ");
+					left(pos, 2);
+					write(pos, "_");
+					left(pos, 1);
 
-				cmd[command_len-1] = '\0';
-				command_len--;
+					cmd[command_len-1] = '\0';
+					command_len--;
+				}
 			} else {
 				str[0] = key.character;
 				write(pos, str);
@@ -73,11 +75,43 @@ void get_command(char *cmd, int *pos) {
 				command_len++;
 			}
 		}
-
 	}
 }
 
-int kernel_main(char *error) {
+int run_command(char *cmd, int *pos, char error[]) {
+
+	int cmd_len = str_len(cmd);
+	int code = 0;
+
+	if (starts_with(cmd, "echo")) {
+		if (cmd_len > 5) {
+			// char *echoed;
+			// strip_prefix(cmd, 5, echoed);
+
+			// write(pos, echoed);
+			for (int i = 5; i < str_len(cmd); i++) {
+				char a[2];
+				a[0] = cmd[i];
+				a[1] = '\0';
+				write(pos, a);
+			}
+		}
+	} else if (starts_with(cmd, "clear")) {
+		*pos = 0;
+		clear_screen();
+		write(pos, "KageOS\n\n");
+
+		return code;
+	} else {
+		write(pos, "No command found with that name");
+	}
+
+	write(pos, "\n");
+
+	return code;
+}
+
+int kernel_main(char error[]) {
 
 	clear_screen();
 
@@ -93,8 +127,11 @@ int kernel_main(char *error) {
 			continue;
 		}
 
-		write(&pos, command);
-		write(&pos, "\n");
+		int code = run_command(command, &pos, error);
+
+		if (code != 0) {
+			return code;
+		}
 
 		command[0] = '\0';
 
@@ -104,7 +141,7 @@ int kernel_main(char *error) {
 }
 
 void kernel_entry() {
-	char *error = "No error message";
+	char error[100] = "No error message";
 	int return_code = kernel_main(error);
 	clear_screen();
 

@@ -1,4 +1,5 @@
 #include "bool.h"
+#include "screen.h"
 
 int str_len(char *str) {
 	int i = 0;
@@ -6,6 +7,23 @@ int str_len(char *str) {
 		i++;
 	}
 	return i;
+}
+
+bool starts_with(char *str, char *prefix) {
+	int len = str_len(prefix);
+	for (int i = 0; i < len; i++) {
+		if (str[i] != prefix[i]) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+void strip_prefix(char *str, int prefix_len, char *stripped) {
+	for (int i = prefix_len; i < str_len(str)-prefix_len; i++) {
+		stripped[i-prefix_len] = str[i];
+	}
 }
 
 void reverse(char *str) {
