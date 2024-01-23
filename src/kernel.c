@@ -85,10 +85,6 @@ int run_command(char *cmd, int *pos, char error[]) {
 
 	if (starts_with(cmd, "echo")) {
 		if (cmd_len > 5) {
-			// char *echoed;
-			// strip_prefix(cmd, 5, echoed);
-
-			// write(pos, echoed);
 			for (int i = 5; i < str_len(cmd); i++) {
 				char a[2];
 				a[0] = cmd[i];
@@ -102,6 +98,11 @@ int run_command(char *cmd, int *pos, char error[]) {
 		write(pos, "KageOS\n\n");
 
 		return code;
+	} else if (starts_with(cmd, "help")) {
+		write(pos,
+		"echo:   Echoes out arguments\n"
+		"clear:  Clears screen\n"
+		"help:   Shows this menu");
 	} else {
 		write(pos, "No command found with that name");
 	}
